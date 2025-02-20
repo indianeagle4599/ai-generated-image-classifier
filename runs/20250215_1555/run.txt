@@ -1,0 +1,1 @@
+Train Loss: 0.4664, Train Accuracy: 0.8028, Train F1: 0.8025 | Val Loss: 0.3786, Val Accuracy: 0.8559, Val F1: 0.8559

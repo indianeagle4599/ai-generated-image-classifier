@@ -1,0 +1,157 @@
+{
+    "target_shape": [
+        448,
+        448
+    ],
+    "multiplier": 2,
+    "batch_size": 16,
+    "noise_threshold": 1.5,
+    "random_seed": 42,
+    "preprocess_val": true,
+    "augmentations": {
+        "random_flip": {
+            "probability": 0.5,
+            "noise_rating": 0.1,
+            "params": {
+                "p_horizontal": 0.5,
+                "p_vertical": 0.3
+            }
+        },
+        "random_rotation": {
+            "probability": 0.5,
+            "noise_rating": 0.2,
+            "params": {
+                "max_angle": 15
+            }
+        },
+        "color_jitter": {
+            "probability": 0.5,
+            "noise_rating": 0.2,
+            "params": {
+                "brightness": 0.2,
+                "contrast": 0.2,
+                "saturation": 0.2,
+                "hue": 0.1
+            }
+        },
+        "random_perspective": {
+            "probability": 0.5,
+            "noise_rating": 0.3,
+            "params": {
+                "scale": 0.03
+            }
+        },
+        "random_affine": {
+            "probability": 0.5,
+            "noise_rating": 0.3,
+            "params": {
+                "scale": [
+                    0.95,
+                    1.05
+                ],
+                "translate": [
+                    0.05,
+                    0.05
+                ],
+                "shear": 10
+            }
+        },
+        "gaussian_blur": {
+            "probability": 0.2,
+            "noise_rating": 0.3,
+            "params": {
+                "max_sigma": 1
+            }
+        },
+        "random_erasing": {
+            "probability": 0.35,
+            "noise_rating": 0.3,
+            "params": {
+                "p": 0.5,
+                "sl": 0.02,
+                "sh": 0.2,
+                "r1": 0.3,
+                "r2": 2.0
+            }
+        },
+        "salt_pepper": {
+            "probability": 0.35,
+            "noise_rating": 0.3,
+            "params": {
+                "amount": 0.02
+            }
+        },
+        "grid_distortion": {
+            "probability": 0.2,
+            "noise_rating": 0.4,
+            "params": {
+                "num_steps": 5,
+                "distort_limit": 0.2
+            }
+        },
+        "elastic_transform": {
+            "probability": 0.2,
+            "noise_rating": 0.4,
+            "params": {
+                "alpha": 20,
+                "sigma": 4
+            }
+        },
+        "add_rain": {
+            "probability": 0.2,
+            "noise_rating": 0.3,
+            "params": {
+                "slant": -1,
+                "drop_length": 20,
+                "drop_width": 1,
+                "drop_color": [
+                    200,
+                    200,
+                    200
+                ],
+                "num_drops": 100
+            }
+        },
+        "add_glare": {
+            "probability": 0.4,
+            "noise_rating": 0.3,
+            "params": {
+                "num_circles": 3,
+                "max_radius": 100
+            }
+        },
+        "contrast_shift": {
+            "probability": 0.5,
+            "noise_rating": 0.2,
+            "params": {
+                "factor": 1.2
+            }
+        },
+        "random_crop": {
+            "probability": 0.35,
+            "noise_rating": 0.3,
+            "params": {
+                "min_crop_size": [
+                    420,
+                    420
+                ],
+                "max_crop_size": [
+                    448,
+                    448
+                ]
+            }
+        },
+        "mixup": {
+            "probability": 0.6,
+            "noise_rating": 0.4,
+            "params": {
+                "alpha": 0.3
+            }
+        },
+        "mosaic": {
+            "probability": 0.6,
+            "noise_rating": 0.4,
+            "params": {}
+        }
+    }
+}
