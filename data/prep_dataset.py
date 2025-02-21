@@ -3,7 +3,6 @@ import shutil
 from datetime import datetime
 from tqdm import tqdm
 import pandas as pd
-import json
 
 
 def format_path(path, depth=4):
@@ -11,7 +10,7 @@ def format_path(path, depth=4):
     Returns only the first few parts of a path to reduce verbosity.
     """
     parts = os.path.normpath(path).split(os.sep)
-    return os.sep.join(parts[-1 * min(depth, len(parts)) :])
+    return '"' + os.sep.join(parts[-1 * min(depth, len(parts)) :]) + '"'
 
 
 def split_data(df, split_value, seed=None):
@@ -130,6 +129,10 @@ def main(
     preprocess_images=False,
     augment=False,
     augment_config_json=None,
+    train_columns=["file_name", "label"],
+    val_columns=["file_name", "label"],
+    dev_columns=["file_name", "label"],
+    test_columns=["file_name", "label"],
 ):
     """
     Organizes a dataset into train, validation, development, and test splits.
@@ -240,6 +243,7 @@ def main(
             f"Validation set created at: {format_path(new_val_csv)} with {len(val_df)} samples"
         )
         dfs["val"] = val_df
+
     elif os.path.exists(csv_paths["val"]):
         val_df = pd.read_csv(csv_paths["val"])
         val_df = update_dataframe(val_df, val_dir)
@@ -381,7 +385,7 @@ def main(
             )
             # Perform augmentation only on training images.
             augmentor.augment_images()
-            augmentor.save_augmentations()
+
             print(
                 f"Augmentation complete for train folder: {format_path(new_dirs['train'])}"
             )
@@ -398,8 +402,9 @@ def main(
 
 if __name__ == "__main__":
     main(
-        root_dir_path="C:/Users/hites/OneDrive/Desktop/AI6102 - ML Project/dataset/example",
+        root_dir_path="C:/Users/hites/OneDrive/Desktop/AI6102 - ML Project/dataset/original",
         val_split=0.2,
-        dev_split=0.3,
+        dev_split=1000,
         augment=True,
+        test_columns=["id"],
     )

@@ -1,4 +1,13 @@
-Option to pause and continue training
-MLOps setup for training and logging
-Weights, layers and outputs' visualization
-Grid search for hyperparameter tuning
+- Dynamic and inutitive pipeline
+ - fix splitting function of prep_dataset to ensure non-repetition in train, val and test.
+ - add a "data_config.json" file option to set dataset configurations and avoid hardcoding label and column names.
+ - reflect the changes in the training configs and dataset functions.
+ - make the "config.py" file into a "train_config.json" file and directly read the json file.
+ - copy "data_config.json", "train_config.json" and "aug_config.json" files to every new run.
+ - make a defaults folder to pick default configs if user doesn't provide specific configs.
+ - make the augmentation and dataset preparation script compatible with multi-class datasets as class probabilities or just label encoded or even just labels directly.
+
+- More elborate MLOps setup for training and logging
+ - Option to pause and continue training
+ - Weights, layers and outputs' visualization
+ - Grid search for hyperparameter tuning

@@ -1,21 +1,31 @@
+import random
 import numpy as np
+import pandas as pd
 import cv2
+
 import scipy
 from scipy.ndimage import gaussian_filter
 
-import json
-import csv
 import os
-import random
-
+import json
 from tqdm import tqdm
 
 
 class Augmentor:
 
-    def __init__(self, config_path, df, image_folder, output_folder, output_csv):
+    def __init__(
+        self,
+        config_path,
+        df,
+        image_folder,
+        output_folder,
+        output_csv,
+        path_column="file_name",
+        label_column="label",
+    ):
         self.config = self.load_config(config_path)
         self.df = df
+        self.new_df = df.copy()
 
         # Set random seed for reproducibility
         random.seed(self.config["random_seed"])
@@ -26,7 +36,9 @@ class Augmentor:
         self.output_folder = output_folder
         self.output_csv = output_csv
 
-        self.aug_dict = {image_name: 0 for image_name in self.df["file_name"]}
+        self.path_column, self.label_column = path_column, label_column
+
+        self.aug_dict = {image_name: 0 for image_name in self.df[path_column]}
 
     def load_config(self, config_path):
         with open(config_path, "r") as f:
@@ -443,17 +455,46 @@ class Augmentor:
 
     def process_original_images(self):
         for index, row in tqdm(self.df.iterrows(), desc="Processing original images"):
-            image_path = os.path.join(self.image_folder, row["file_name"])
-            new_file_path = os.path.join(self.output_folder, row["file_name"])
+            image_path = os.path.join(self.image_folder, row[self.path_column])
+            new_file_path = os.path.join(
+                self.output_folder, os.path.basename(row[self.path_column])
+            )
             self.preprocess_image(
                 image_path, new_file_path, self.config["target_shape"]
             )
+
+    def process_augmentations(self, batch, image_folder, target_shape):
+        images = []
+        labels = []
+        file_names = []
+        for index, row in batch.iterrows():
+            image_path = os.path.join(image_folder, row[self.path_column])
+            image = cv2.imread(image_path)
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            image, _, _ = self.letterbox(image, new_shape=target_shape)
+            label = float(row[self.label_column])
+            images.append(image)
+            labels.append(label)
+            file_names.append(row[self.path_column])
+            self.aug_dict[row[self.path_column]] += 1
+
+        augmented_images, augmented_labels, augmentation_lists = (
+            self.apply_augmentations(images, labels)
+        )
+
+        results = []
+        for i, (aug_img, aug_label, _) in enumerate(
+            zip(augmented_images, augmented_labels, augmentation_lists)
+        ):
+
+            new_filename = f"{os.path.splitext(file_names[i])[0]}_aug_{self.aug_dict[file_names[i]]}.jpg"
+            results.append((aug_img, aug_label, new_filename))
+        return results
 
     def augment_images(self):
         batch_size = self.config.get("batch_size", 16)
         total_batches = (len(self.df) + batch_size - 1) // batch_size
 
-        results = []
         for m in range(self.config["multiplier"]):
             # Shuffle the DataFrame before creating batches
             shuffled_df = self.df.sample(frac=1).reset_index(drop=True)
@@ -462,61 +503,32 @@ class Augmentor:
                 range(total_batches),
                 desc=f"Processing batches (Epoch {m+1}/{self.config['multiplier']})",
             ):
+                # Get the current batch
                 batch = shuffled_df.iloc[i * batch_size : (i + 1) * batch_size]
+
+                # Process augmentations for the current batch
                 batch_results = self.process_augmentations(
-                    batch, self.config, self.image_folder, self.config["target_shape"]
+                    batch, self.image_folder, self.config["target_shape"]
                 )
-                results.extend(batch_results)
 
-        self.save_augmentations(results)
-
-    def process_augmentations(self, batch, config, image_folder, target_shape):
-        images = []
-        labels = []
-        file_names = []
-        for index, row in batch.iterrows():
-            image_path = os.path.join(image_folder, row["file_name"])
-            image = cv2.imread(image_path)
-            image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            image, _, _ = self.letterbox(image, new_shape=target_shape)
-            label = float(row["label"])
-            images.append(image)
-            labels.append(label)
-            file_names.append(row["file_name"])
-            self.aug_dict[row["file_name"]] += 1
-
-        augmented_images, augmented_labels, augmentation_lists = (
-            self.apply_augmentations(images, labels)
-        )
-
-        results = []
-        for i, (aug_img, aug_label, aug_list) in enumerate(
-            zip(augmented_images, augmented_labels, augmentation_lists)
-        ):
-
-            new_filename = f"{os.path.splitext(file_names[i])[0]}_aug_{self.aug_dict[file_names[i]]}.jpg"
-            results.append((aug_img, aug_label, new_filename, aug_list))
-        return results
+                # Save augmentations for this batch
+                self.save_augmentations(batch_results)
+        return self.new_df
 
     def save_augmentations(self, results):
-        with open(self.output_csv, "a", newline="") as csvfile:
-            fieldnames = ["file_name", "label", "augmentations"]
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-            if csvfile.tell() == 0:
-                writer.writeheader()
+        labels, filenames = [], []
+        # Save images and write rows to CSV
+        for img, label, filename in results:
+            cv2.imwrite(
+                os.path.join(self.output_folder, os.path.basename(filename)),
+                cv2.cvtColor(img, cv2.COLOR_RGB2BGR),
+            )
+            labels.append(label)
+            filenames.append(filename)
 
-            for img, label, filename, aug_list in results:
-                cv2.imwrite(
-                    os.path.join(self.output_folder, filename),
-                    cv2.cvtColor(img, cv2.COLOR_RGB2BGR),
-                )
-                writer.writerow(
-                    {
-                        "file_name": filename,
-                        "label": label,
-                        "augmentations": aug_list,
-                    }
-                )
+        df = pd.DataFrame({self.path_column: filenames, self.label_column: labels})
+        self.new_df = pd.concat([self.new_df, df], ignore_index=True)
+        self.new_df.to_csv(self.output_csv, index=False)
 
 
 def main(config_path, df, output_folder, output_csv, num_workers):
@@ -524,13 +536,3 @@ def main(config_path, df, output_folder, output_csv, num_workers):
     augmentor.process_images(num_workers)
     print(f"Augmented images saved in: {augmentor.output_folder}")
     print(f"Augmented CSV file: {augmentor.output_csv}")
-
-
-if __name__ == "__main__":
-    import pandas as pd
-
-    config_path = "aug_config.json"
-    df = pd.read_csv("dataset/train.csv")
-    output_folder = "path/to/output/folder"
-    output_csv = "path/to/output/csv.csv"
-    main(config_path, df, output_folder, output_csv, num_workers=4)

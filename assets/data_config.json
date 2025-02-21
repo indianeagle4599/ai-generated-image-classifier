@@ -1,0 +1,57 @@
+{
+    "output_root": "",
+    "source_csv": "train.csv",
+    "label_as_probs": true,
+    "splits": [
+        {
+            "name": "train",
+            "source": "train.csv",
+            "csv_path": "train.csv",
+            "output_folder": "train_data",
+            "exclusive": true,
+            "split_size": 0.8,
+            "augment": true,
+            "preprocess": true,
+            "path_column": "file_name",
+            "label_column": "label",
+            "column_mapping": {
+                "file_name": "file_name",
+                "label": "label"
+            }
+        },
+        {
+            "name": "val",
+            "csv_path": "val.csv",
+            "output_folder": "val",
+            "exclusive": true,
+            "split_size": 0.2,
+            "augment": false,
+            "preprocess": true,
+            "path_column": "file_name",
+            "label_column": "label"
+        },
+        {
+            "name": "test",
+            "source": "test.csv",
+            "csv_path": "test.csv",
+            "output_folder": "test_data_v2",
+            "exclusive": true,
+            "preprocess": true,
+            "path_column": "id",
+            "column_mapping": {
+                "id": "id"
+            }
+        },
+        {
+            "name": "dev",
+            "csv_path": "dev.csv",
+            "output_folder": "dev",
+            "exclusive": false,
+            "split_size": 50,
+            "augment": true,
+            "preprocess": true,
+            "path_column": "file_name",
+            "label_column": "label"
+        }
+    ]
+}

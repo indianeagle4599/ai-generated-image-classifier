@@ -3,7 +3,7 @@
         448,
         448
     ],
-    "multiplier": 5,
+    "multiplier": 2,
     "batch_size": 4,
     "noise_threshold": 1.5,
     "random_seed": 42,

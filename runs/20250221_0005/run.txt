@@ -1,0 +1,10 @@
+Train Loss: 0.5265, Train Accuracy: 0.7535, Train F1: 0.7535 | Val Loss: 1.5322, Val Accuracy: 0.4876, Val F1: 0.3202
+Train Loss: 0.4783, Train Accuracy: 0.7818, Train F1: 0.7818 | Val Loss: 0.5502, Val Accuracy: 0.6964, Val F1: 0.6746
+Train Loss: 0.4566, Train Accuracy: 0.7943, Train F1: 0.7943 | Val Loss: 0.4340, Val Accuracy: 0.8105, Val F1: 0.8104
+Train Loss: 0.4446, Train Accuracy: 0.8009, Train F1: 0.8009 | Val Loss: 0.6323, Val Accuracy: 0.6667, Val F1: 0.6353
+Train Loss: 0.4354, Train Accuracy: 0.8049, Train F1: 0.8049 | Val Loss: 0.4539, Val Accuracy: 0.7962, Val F1: 0.7956
+Train Loss: 0.4239, Train Accuracy: 0.8110, Train F1: 0.8111 | Val Loss: 0.5800, Val Accuracy: 0.7366, Val F1: 0.7236
+Train Loss: 0.4173, Train Accuracy: 0.8141, Train F1: 0.8141 | Val Loss: 0.4290, Val Accuracy: 0.8092, Val F1: 0.8092
+Train Loss: 0.4130, Train Accuracy: 0.8169, Train F1: 0.8170 | Val Loss: 0.4022, Val Accuracy: 0.8172, Val F1: 0.8167
+Train Loss: 0.4083, Train Accuracy: 0.8190, Train F1: 0.8190 | Val Loss: 0.4040, Val Accuracy: 0.8149, Val F1: 0.8138
+Train Loss: 0.4049, Train Accuracy: 0.8212, Train F1: 0.8213 | Val Loss: 0.4976, Val Accuracy: 0.7381, Val F1: 0.7255

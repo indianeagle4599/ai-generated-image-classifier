@@ -11,10 +11,10 @@ from config import Config
 def predict():
     config = Config()
 
-    run_path = "runs/20250215_2147"
+    run_folder = "runs/20250215_2147"
     model_name = "best.pt"
 
-    config.load_json_config(os.path.join(run_path, "config.json"))
+    config.load_json_config(os.path.join(run_folder, "config.json"))
 
     test, test_loader = get_test_dataloader(
         config.DATA_PATH,
@@ -28,7 +28,7 @@ def predict():
         config.MODEL_NAME, config.PRETRAINED, num_classes=config.NUM_CLASSES
     )
     model.load_state_dict(
-        torch.load(os.path.join(run_path, model_name))["model_state_dict"]
+        torch.load(os.path.join(run_folder, model_name))["model_state_dict"]
     )
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -48,7 +48,9 @@ def predict():
     test["label"] = test_pred_classes
 
     # Save predictions to a CSV file
-    test[["id", "label"]].to_csv(os.path.join(run_path, "submission.csv"), index=False)
+    test[["id", "label"]].to_csv(
+        os.path.join(run_folder, "submission.csv"), index=False
+    )
     print("Test predictions saved to 'submission.csv'")
 
 

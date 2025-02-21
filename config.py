@@ -3,20 +3,22 @@ import json
 
 class Config:
     # Data configuration
-    DATA_PATH = "dataset"
-    TRAIN_CSV = "augmented_20250214_2324.csv"
+    DATA_PATH = "dataset/20250220_2223_aug"
+    TRAIN_CSV = "train.csv"
+    VAL_CSV = "val.csv"
     TEST_CSV = "test.csv"
     BATCH_SIZE = 128
-    NUM_WORKERS = 4
+    NUM_WORKERS = 0
     IMAGE_SIZE = (112, 112)
     NUM_CLASSES = 2
+    FEATURES = ["FFT", "DCT"]  # Options: "FFT", "DCT",
 
     # Model configuration
-    MODEL_NAME = "mobilenet_v2"  # Options: "resnet50", "vgg16", "mobilenet_v2", "inception_v3", "convnext_tiny", "resnext50_32x4d", "vit_b_16", "vit_l_32", "swin_v2_b", "swin_v2_t"
+    MODEL_NAME = ""  # Options: "resnet50", "vgg16", "mobilenet_v2", "inception_v3", "convnext_tiny", "resnext50_32x4d", "vit_b_16", "vit_l_32", "swin_v2_b", "swin_v2_t"
     PRETRAINED = False
 
     # Training configuration
-    EPOCHS = 25
+    EPOCHS = 50
     LEARNING_RATE = 0.001
     MOMENTUM = 0.9
     WEIGHT_DECAY = 0.0001
@@ -50,6 +52,7 @@ class Config:
                 "num_workers": config_dict.get("num_workers"),
                 "image_size": config_dict.get("image_size"),
                 "num_classes": config_dict.get("num_classes"),
+                "features": config_dict.get("features"),
             },
             "model": {
                 "model_name": config_dict.get("model_name"),
